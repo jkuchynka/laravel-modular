@@ -1,0 +1,51 @@
+<?php
+
+namespace {{ namespace }};
+
+use {{ namespacedModel }};
+use Base\Http\FormRequest;
+
+class {{ class }} extends FormRequest
+{
+    /**
+     * Get the model this validates against
+     *
+     * @return string
+     */
+    public function model()
+    {
+        return Model::class;
+    }
+
+    /**
+     * Get the relations available to request
+     *
+     * @return array
+     */
+    public function relations()
+    {
+        return [];
+    }
+
+    /**
+     * Determine if the user is authorized to make this request.
+     *
+     * @return bool
+     */
+    public function authorize()
+    {
+        return \Auth::check();
+    }
+
+    /**
+     * Get the validation rules that apply to the request.
+     *
+     * @return array
+     */
+    public function rules()
+    {
+        return [
+            //
+        ];
+    }
+}

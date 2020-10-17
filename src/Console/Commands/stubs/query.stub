@@ -1,0 +1,32 @@
+<?php
+
+namespace {{ namespace }};
+
+use Base\Http\QueryBuilder;
+
+class {{ class }} extends QueryBuilder
+{
+    /**
+     * Get allowed filters
+     *
+     * @return array
+     */
+    public function filters()
+    {
+        return [
+            // ...
+        ];
+    }
+
+    /**
+     * Get allowed sorts
+     *
+     * @return array
+     */
+    public function sorts()
+    {
+        return [
+            // ...
+        ];
+    }
+}

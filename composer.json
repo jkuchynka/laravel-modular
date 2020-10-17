@@ -15,16 +15,31 @@
         }
     ],
     "require": {
-        "php": ">=7.3"
+        "php": ">=7.3",
+        "adbario/php-dot-notation": "^2.2"
     },
     "require-dev": {
         "phpunit/phpunit": "^8.5",
         "laravel/framework": "^8.0",
-        "friendsofphp/php-cs-fixer": "^2.16"
+        "friendsofphp/php-cs-fixer": "^2.16",
+        "orchestra/testbench": "^6.2",
+        "mikey179/vfsstream": "^1.6"
     },
     "autoload": {
         "psr-4": {
             "Modular\\": "src"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Modular\\Tests\\": "tests"
+        }
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "Modular\\ModularServiceProvider"
+            ]
         }
     },
     "scripts": {

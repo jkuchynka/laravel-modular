@@ -1,0 +1,153 @@
+<?php
+
+namespace {{ namespace }};
+
+use {{ namespacedModel }};
+use {{ namespacedParentModel }};
+use Base\Http\Controller;
+use Base\Http\Filters\FiltersAll;
+use Illuminate\Http\Request;
+use Spatie\QueryBuilder\AllowedFilter;
+use Spatie\QueryBuilder\QueryBuilder;
+
+class {{ class }} extends Controller
+{
+    /**
+     * Get allowed filters for index query
+     *
+     * @return array
+     */
+    public function filters()
+    {
+        return [
+            'id'
+        ];
+    }
+
+    /**
+     * Get validation rules
+     *
+     * @param  bool $update For use in update method
+     * @return array
+     */
+    public function rules(bool $update = false)
+    {
+        return [
+            //
+        ];
+    }
+
+    /**
+     * Get allowed sorts for index query
+     *
+     * @return array
+     */
+    public function sorts()
+    {
+        return [
+            'id'
+        ];
+    }
+
+    /**
+     * Display a listing of the resource.
+     *
+     * @param  \{{ namespacedParentModel }}  ${{ parentModelVariable }}
+     * @return \Illuminate\Http\Response
+     */
+    public function index({{ parentModel }} ${{ parentModelVariable }})
+    {
+        $filters = $this->filters();
+        $filters[] = AllowedFilter::custom('all', new FiltersAll($this->filters()));
+        $results = QueryBuilder::for({{ model }}::class)
+            ->allowedFilters($filters)
+            ->allowedSorts($this->sorts())
+            ->jsonPaginate();
+        return $results;
+    }
+
+    /**
+     * Store a newly created resource in storage.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @param  \{{ namespacedParentModel }}  ${{ parentModelVariable }}
+     * @return \Illuminate\Http\Response
+     */
+    public function store(Request $request, {{ parentModel }} ${{ parentModelVariable }})
+    {
+        $request->validate($this->rules());
+        ${{ modelVariable }} = new {{ model }};
+        ${{ modelVariable }}->fill($request->all());
+
+        ${{ modelVariable }}>save();
+
+        return response()->json(${{ modelVariable }});
+    }
+
+    /**
+     * Display the specified resource.
+     *
+     * @param  \{{ namespacedParentModel }}  ${{ parentModelVariable }}
+     * @param  \{{ namespacedModel }}  ${{ modelVariable }}
+     * @return \Illuminate\Http\Response
+     */
+    public function show({{ parentModel }} ${{ parentModelVariable }}, {{ model }} ${{ modelVariable }})
+    {
+        return response()->json(${{ modelVariable }});
+    }
+
+    /**
+     * Update the specified resource in storage.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @param  \{{ namespacedParentModel }}  ${{ parentModelVariable }}
+     * @param  \{{ namespacedModel }}  ${{ modelVariable }}
+     * @return \Illuminate\Http\Response
+     */
+    public function update(Request $request, {{ parentModel }} ${{ parentModelVariable }}, {{ model }} ${{ modelVariable }})
+    {
+        $request->validate($this->rules(true));
+        ${{ modelVariable }}->fill($request->all());
+        ${{ modelVariable }}->save();
+        return response()->json(${{ modelVariable }});
+    }
+
+    /**
+     * Remove the specified resource from storage.
+     *
+     * @param  \{{ namespacedParentModel }}  ${{ parentModelVariable }}
+     * @param  \{{ namespacedModel }}  ${{ modelVariable }}
+     * @return \Illuminate\Http\Response
+     */
+    public function destroy({{ parentModel }} ${{ parentModelVariable }}, {{ model }} ${{ modelVariable }})
+    {
+        ${{ modelVariable }}->delete();
+        return response()->json([
+            'success' => true,
+            'message' => 'Record deleted.'
+        ]);
+    }
+
+    /**
+     *
+     * Remove the specified resources from storage.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @param  \{{ namespacedParentModel }}  ${{ parentModelVariable }}
+     * @return \Illuminate\Http\Response
+     */
+    public function destroyMany(Request $request, {{ parentModel }} ${{ parentModelVariable }})
+    {
+        $request->validate([
+            'ids' => 'required|array'
+        ]);
+        foreach ($request->ids as $id) {
+            ${{ modelVariable }} = {{ model }}::findOrFail($id);
+            ${{ modelVariable }}->delete();
+        }
+        return response()->json([
+            'success' => true,
+            'message' => 'Records deleted.'
+        ]);
+    }
+}
