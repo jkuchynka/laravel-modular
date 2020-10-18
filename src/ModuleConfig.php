@@ -7,29 +7,28 @@ use Illuminate\Support\Str;
 
 class ModuleConfig extends Dot
 {
-    public function __construct($key, $modulePath)
+    public function __construct($key)
     {
         parent::__construct();
-        $this->initDefaults($key, $modulePath);
+        $this->init($key);
     }
 
     /**
      * Initialize default config settings
      * @param string $key
-     * @param string $modulePath
      * @return $this
      */
-    protected function initDefaults(string $key, string $modulePath)
+    protected function init(string $key)
     {
-        $config = [
+        $name = Str::studly($key);
+        $this->items = [
             'key' => $key,
-            'name' => Str::studly($key),
+            'name' => $name,
             'version' => '0.1',
             'dependsOn' => [],
             'seeds' => false,
             'seedsWeight' => 10,
             'paths' => [
-                'module' => $modulePath,
                 'channels' => 'Broadcasting',
                 'commands' => 'Console/Commands',
                 'controllers' => 'Http/Controllers',
@@ -54,12 +53,11 @@ class ModuleConfig extends Dot
                 'tests' => 'Tests',
                 'views' => 'Views'
             ],
+            'namespace' => 'App\\'.$name,
             'routesPrefix' => $key,
-            'routes' => []
+            'routes' => [],
+            'defaultController' => Str::singular($name).'Controller'
         ];
-        $config['namespace'] = 'App\\'.$config['name'];
-        $config['routesController'] = $config['name'].'Controller';
-        $this->items = $config;
 
         return $this;
     }

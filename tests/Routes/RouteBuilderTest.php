@@ -59,25 +59,49 @@ class RouteBuilderTest extends BaseTestCase
     public function testUsesDefaultControllerAndMethod()
     {
         $builder = new RouteBuilder($this->module, ['uri' => '']);
-        $this->assertEquals('PostController@posts', $builder->getUses());
+        $this->assertEquals('App\Posts\Http\Controllers\PostController@posts', $builder->getUses());
     }
 
     public function testUsesDefaultController()
     {
         $builder = new RouteBuilder($this->module, ['uri' => '', 'uses' => 'foobar']);
-        $this->assertEquals('PostController@foobar', $builder->getUses());
+        $this->assertEquals('App\Posts\Http\Controllers\PostController@foobar', $builder->getUses());
     }
 
     public function testUsesDefaultControllerAndUri()
     {
         $builder = new RouteBuilder($this->module, ['uri' => 'foo/bar', 'uses' => 'FooBarController']);
-        $this->assertEquals('FooBarController@fooBar', $builder->getUses());
+        $this->assertEquals('App\Posts\Http\Controllers\FooBarController@fooBar', $builder->getUses());
     }
 
     public function testUsesDefaultControllerAndUriWithoutUses()
     {
         $builder = new RouteBuilder($this->module, ['uri' => 'foo/bar']);
-        $this->assertEquals('PostController@fooBar', $builder->getUses());
+        $this->assertEquals('App\Posts\Http\Controllers\PostController@fooBar', $builder->getUses());
+    }
+
+    public function testUsesNamespaceInController()
+    {
+        $builder = new RouteBuilder($this->module, ['uri' => 'foo/bar', 'uses' => '\Foo\FooBarController']);
+        $this->assertEquals('\Foo\FooBarController@fooBar', $builder->getUses());
+    }
+
+    public function testUsesRelativeNamespaceInController()
+    {
+        $builder = new RouteBuilder($this->module, ['uri' => 'foo/bar', 'uses' => 'Foo\FooBarController']);
+        $this->assertEquals('App\Posts\Http\Controllers\Foo\FooBarController@fooBar', $builder->getUses());
+    }
+
+    public function testUsesWhenControllerPathIsRoot()
+    {
+        $module = new PostsModule($this->app);
+        $module->boot([
+            'paths' => [
+                'controllers' => ''
+            ]
+        ]);
+        $builder = new RouteBuilder($module, ['uri' => 'foo']);
+        $this->assertEquals('App\Posts\PostController@foo', $builder->getUses());
     }
 
     public function testValidatesInvalidUses()

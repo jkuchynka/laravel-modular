@@ -7,6 +7,13 @@ use Modular\Modular;
 
 class RouteServiceProvider extends BaseRouteServiceProvider
 {
+    /**
+     * The controller namespace for the application.
+     *
+     * @var string|null
+     */
+    protected $namespace;
+
     protected function loadRoutes()
     {
         $modular = $this->app->make(Modular::class);

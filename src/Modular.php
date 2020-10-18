@@ -3,7 +3,7 @@
 namespace Modular;
 
 use Adbar\Dot;
-use Base\Modules\Module;
+use Modular\Module;
 use Illuminate\Container\Container;
 use Illuminate\Support\Str;
 use Modular\Exceptions\ModuleNotFoundException;

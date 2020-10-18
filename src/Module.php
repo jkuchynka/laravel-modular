@@ -3,16 +3,18 @@
 namespace Modular;
 
 use Illuminate\Container\Container;
-use Illuminate\Support\Str;
 use Modular\Concerns\LoadsRoutes;
 use Modular\Exceptions\InvalidModuleException;
-use Symfony\Component\Yaml\Yaml;
 
 abstract class Module
 {
-    use LoadsRoutes;
-
     protected $key;
+
+    protected $name;
+
+    protected $description;
+
+    protected $version = 0.1;
 
     protected $app;
 
@@ -23,18 +25,33 @@ abstract class Module
         if (!$this->key) {
             throw new InvalidModuleException('Module $key is required');
         }
+        if (!$this->name) {
+            throw new InvalidModuleException('Module $name is required');
+        }
         $this->app = $app;
     }
+
+    abstract protected function config() : array;
 
     public function boot(array $config = [])
     {
         $class = new \ReflectionClass(static::class);
         $modulePath = dirname($class->getFileName());
-        $filename = $modulePath.'/'.$this->key.'.config.yaml';
-        $parser = new Yaml;
-        $moduleConfig = $parser->parseFile($filename);
-        $this->config = new ModuleConfig($this->key, $modulePath);
-        $this->config->mergeRecursiveDistinct($moduleConfig);
+        $this->config = new ModuleConfig($this->key);
+        $this->config['paths.module'] = $modulePath;
+        $this->config['description'] = $this->description;
+        $this->config['version'] = $this->version;
+
+        // If this module has routes, add them to config, where they
+        // can be overridden by the modular config
+        if (in_array(
+            LoadsRoutes::class,
+            class_uses($this)
+        )) {
+            $this->config['routes'] = $this->routes();
+        }
+
+        $this->config->mergeRecursiveDistinct($this->config());
         $this->config->mergeRecursiveDistinct($config);
     }
 
