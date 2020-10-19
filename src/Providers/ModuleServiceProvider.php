@@ -2,10 +2,12 @@
 
 namespace Modular\Providers;
 
+use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Config\Repository;
 use Illuminate\Contracts\View\Factory as ViewFactory;
 use Illuminate\Database\Eloquent\Factory as EloquentFactory;
+use Illuminate\Support\Str;
 use Modular\Modular;
 use Symfony\Component\Finder\Finder;
 use Symfony\Component\Yaml\Yaml;
@@ -54,16 +56,24 @@ class ModuleServiceProvider extends ServiceProvider
 
     protected function registerFactories()
     {
-        $modular = $this->app->make(Modular::class);
-        $factory = $this->app->make(EloquentFactory::class);
-        foreach ($modular->getModules() as $module) {
-            $path = $module->getPath('factories');
-            if (is_dir($path)) {
-                foreach (Finder::create()->files()->name('*Factory.php')->in($path) as $file) {
-                    require $file->getRealPath();
-                }
+        Factory::guessFactoryNamesUsing(function (string $modelName) {
+            // Handle App\Models\User, App\User and App\Users\Models\User
+            $modelName = Str::startsWith($modelName, 'App\\Models\\')
+                ? Str::after($modelName, 'App\\Models\\')
+                : Str::after($modelName, 'App\\');
+
+            if (Str::contains($modelName, '\\')) {
+                // This model belongs to a module
+                $moduleName = Str::before($modelName, '\\');
+                $modular = $this->app->make(Modular::class);
+                $module = $modular->getModule($moduleName);
+                $path = $module->getPath('factories');
+                $nsPath = Str::replaceArray('/', '\\', $path);
+                return $nsPath.'\\'.$modelName.'Factory';
             }
-        }
+
+            return static::$namespace.$modelName.'Factory';
+        });
     }
 
     protected function registerMigrations()

@@ -12,7 +12,7 @@ class Modular
 {
     protected $app;
 
-    protected $modules;
+    protected $modules = [];
 
     protected $loaded = false;
 
@@ -23,22 +23,16 @@ class Modular
 
     public function bootModules()
     {
-        $modules = $this->app['config']->get('modular.modules');
-        $dependencies = [];
+        $modules = $this->app['config']->get('modular.modules', []);
+
         foreach ($modules as $moduleClass => $config) {
             $module = new $moduleClass($this->app);
             $module->boot($config);
             $this->modules[$module->key] = $module;
-
-            // If this module depends on other modules,
-            // make sure they are loaded as well
-            if ($dependsOn = $module->get('dependsOn')) {
-                $dependencies = array_merge($dependencies, $dependsOn);
-            }
         }
 
         // Check that dependencies are installed
-        foreach ($this->modules as $key => $module) {
+        foreach ($modules as $key => $module) {
             foreach ($module->dependsOn as $dependsKey) {
                 if (!isset($this->modules[$dependsKey])) {
                     throw new ModuleNotFoundException(
@@ -59,6 +53,11 @@ class Modular
     {
         if (isset($this->modules[$key])) {
             return $this->modules[$key];
+        }
+        foreach ($this->modules as $module) {
+            if ($module->name == $key) {
+                return $module;
+            }
         }
         throw new ModuleNotFoundException('Module: '.$key.' not installed.');
     }
