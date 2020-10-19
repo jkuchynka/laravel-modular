@@ -21,10 +21,22 @@ class PostsModule extends Module
     protected function routes(): array
     {
         return [
-            // This should create all resource routes (index, store, show, update, destroy)
-            // with a prefix of the module key, routed to the default module controller
-            // e.g. GET posts/{post} -> PostController@show
-            ['uri' => '', 'method' => 'resource'],
+            [
+                'routes' => [
+                    // This should create all resource routes (index, store, show, update, destroy)
+                    // with a prefix of the module key, routed to the default module controller
+                    // e.g. GET posts/{post} -> PostController@show
+                    ['uri' => '', 'method' => 'resource'],
+                ]
+            ],
+            [
+                'prefix' => 'api',
+                'middleware' => ['api'],
+                'routes' => [
+                    ['uri' => 'reports', 'method' => 'api-resource', 'uses' => 'ReportController'],
+                    ['uri' => '{post}/download', 'uses' => 'ReportController@download']
+                ]
+            ]
         ];
     }
 }

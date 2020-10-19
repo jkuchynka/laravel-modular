@@ -3,19 +3,28 @@
 namespace Modular\Concerns;
 
 use Illuminate\Support\Facades\Route;
+use Modular\Exceptions\InvalidModuleException;
 use Modular\Routes\RouteBuilder;
 
 trait LoadsRoutes
 {
     abstract protected function routes(): array;
 
+    /**
+     * Load routes
+     * @throws InvalidModuleException
+     */
     public function loadRoutes()
     {
         // First level of routes should be array of groups
         foreach ($this->get('routes', []) as $group) {
+            if (!isset($group['routes'])) {
+                throw new InvalidModuleException('Invalid module config: '.$this->key.' route group missing routes');
+            }
+
             Route::group([
-                'prefix' => $group['prefix'],
-                'middleware' => $group['middleware']
+                'prefix' => isset($group['prefix']) ? $group['prefix'] : '',
+                'middleware' => isset($group['middleware']) ? $group['middleware'] : 'web'
             ], function () use ($group) {
                 foreach ($group['routes'] as $moduleRoute) {
                     $builder = new RouteBuilder($this, $moduleRoute);
