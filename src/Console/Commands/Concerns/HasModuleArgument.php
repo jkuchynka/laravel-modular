@@ -2,6 +2,7 @@
 
 namespace Modular\Console\Commands\Concerns;
 
+use Modular\Modular;
 use Symfony\Component\Console\Input\InputArgument;
 
 trait HasModuleArgument
@@ -29,9 +30,9 @@ trait HasModuleArgument
     protected function getModule()
     {
         if (! $this->module) {
-            $modules = resolve('modules');
+            $modular = app('modular');
             $module = trim($this->argument('module'));
-            $this->module = $modules->getModule($module);
+            $this->module = $modular->getModule($module);
         }
         return $this->module;
     }

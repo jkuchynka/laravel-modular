@@ -4,6 +4,7 @@ namespace Modular\Console\Commands\Concerns;
 
 use Base\Helpers\Common;
 use Illuminate\Support\Str;
+use Modular\Support\Namespaces;
 
 trait GeneratesForModule
 {
@@ -150,21 +151,22 @@ trait GeneratesForModule
     protected function getPath($name)
     {
         $name = str_replace('.php', '', $name);
+
         // Allow for handling namespaced class, module path or relative path
         $pathed = str_replace('\\', '/', $name);
 
-        $namespacedClass = Common::namespaceFromPath($pathed);
+        $namespacedClass = Namespaces::namespaceFromPath($pathed);
 
         // If fully namespaced and starts with module namespace,
         // it should use the namespaced class path
-        $moduleNamespace = $this->getModule()->namespace();
+        $moduleNamespace = $this->getModule()->namespace;
         if ($name != $moduleNamespace && Str::of($namespacedClass)->contains($moduleNamespace)) {
             $relativeNamespacedClass = str_replace($moduleNamespace, '', $namespacedClass);
-            return $this->getModule()->path().'/'.Common::namespaceToPath($relativeNamespacedClass).'.php';
+            return $this->getModule()->path().'/'.Namespaces::namespaceToPath($relativeNamespacedClass).'.php';
         }
 
         // File will go in target path
-        return $this->getTargetPath().'/'.Common::namespaceToPath($namespacedClass).'.php';
+        return $this->getTargetPath().'/'.Namespaces::namespaceToPath($namespacedClass).'.php';
     }
 
     /**
@@ -178,11 +180,11 @@ trait GeneratesForModule
         $module = $this->getModule();
 
         // Get relative path from module root
-        $relative = ltrim(str_replace($module->path(), '', $path), '/');
-        $namespace = Common::namespaceFromPath($relative);
+        $relative = ltrim(str_replace($module->get('paths.module'), '', $path), '/');
+        $namespace = Namespaces::namespaceFromPath($relative);
 
         // Combine module namespace, relative namespace and class name
         $class = pathinfo($path, PATHINFO_FILENAME);
-        return Common::namespaceCombine($module->namespace(), $namespace).'\\'.$class;
+        return Namespaces::namespaceCombine($module->namespace(), $namespace).'\\'.$class;
     }
 }

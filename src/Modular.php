@@ -3,6 +3,7 @@
 namespace Modular;
 
 use Adbar\Dot;
+use Illuminate\Config\Repository;
 use Modular\Module;
 use Illuminate\Container\Container;
 use Illuminate\Support\Str;
@@ -23,16 +24,18 @@ class Modular
 
     public function bootModules()
     {
-        $modules = $this->app['config']->get('modular.modules', []);
+        $modules = $this->app->make('config')->get('modular.modules', []);
 
-        foreach ($modules as $moduleClass => $config) {
+        foreach ($modules as $key => $value) {
+            $moduleClass = is_numeric($key) && is_string($value) ? $value : $key;
             $module = new $moduleClass($this->app);
+            $config = is_array($value) ? $value : [];
             $module->boot($config);
             $this->modules[$module->key] = $module;
         }
 
         // Check that dependencies are installed
-        foreach ($modules as $key => $module) {
+        foreach ($this->modules as $key => $module) {
             foreach ($module->dependsOn as $dependsKey) {
                 if (!isset($this->modules[$dependsKey])) {
                     throw new ModuleNotFoundException(

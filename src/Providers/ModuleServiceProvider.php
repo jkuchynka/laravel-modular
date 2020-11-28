@@ -22,7 +22,7 @@ class ModuleServiceProvider extends ServiceProvider
      */
     public function register()
     {
-        $this->app->singleton(Modular::class, function ($app) {
+        $this->app->singleton('modular', function ($app) {
             $modular = new Modular($app);
             $modular->bootModules();
             return $modular;
