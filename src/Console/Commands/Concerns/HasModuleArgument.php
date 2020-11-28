@@ -8,6 +8,9 @@ use Symfony\Component\Console\Input\InputArgument;
 
 trait HasModuleArgument
 {
+    /**
+     * @var Module
+     */
     protected $module;
 
     /**
@@ -25,6 +28,7 @@ trait HasModuleArgument
 
     /**
      * Get the module from the argument
+     *
      * @return Module
      */
     protected function getModule()

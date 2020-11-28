@@ -16,99 +16,71 @@ trait GeneratesForModule
     abstract protected function getTargetPath();
 
     /**
-     * Execute the console command.
+     * Get the root namespace for the class.
      *
-     * @return bool|null
-     *
-     * @throws \Illuminate\Contracts\Filesystem\FileNotFoundException
+     * @return string
      */
-    public function handle()
+    protected function rootNamespace()
     {
-        $path = $this->getPath($this->getNameInput());
-
-        $name = $this->qualifyClass($path);
-
-        // First we will check to see if the class already exists. If it does, we don't want
-        // to create the class and overwrite the user's code. So, we will bail out so the
-        // code is untouched. Otherwise, we will continue generating this class' files.
-        if ((! $this->hasOption('force') ||
-             ! $this->option('force')) &&
-             $this->files->exists($path)
-            ) {
-            $this->error($this->type.' already exists!');
-
-            return false;
-        }
-
-        // Next, we will generate the path to the location where this class' file should get
-        // written. Then, we will build the class and make the proper replacements on the
-        // stub files so that it gets the correctly formatted namespace and class name.
-        $this->makeDirectory($path);
-
-        $this->files->put($path, $this->sortImports($this->buildClass($name)));
-
-        $this->info($this->type.' created successfully.');
+        return $this->getModule()->getNamespace();
     }
 
     /**
-     * Get the default replacement variables for the stub
+     * Get the default namespace for the class.
      *
-     * @param string $name
-     * @return array
+     * @param  string  $rootNamespace
+     * @return string
      */
-    protected function getDefaultReplacements($name)
+    protected function getDefaultNamespace($rootNamespace)
     {
-        $class = str_replace($this->getNamespace($name).'\\', '', $name);
-        $namespace = $this->getNamespace($name);
-        $rootNamespace = $this->rootNamespace();
-        $userModel = $this->userProviderModel();
+        return $this->getModule()->getNamespace('models');
+    }
 
-        $replacements = [
-            'DummyClass' => $class,
-            '{{ class }}' => $class,
-            '{{class}}' => $class,
+    /**
+     * Parse the class name and format according to the root namespace.
+     *
+     * @param  string  $name
+     * @return string
+     */
+    protected function qualifyClass($name)
+    {
+        $name = str_replace('.php', '', $name);
 
-            'DummyNamespace' => $namespace,
-            '{{ namespace }}' => $namespace,
-            '{{namespace}}' => $namespace,
+        return parent::qualifyClass($name);
+    }
 
-            'DummyRootNamespace' => $rootNamespace,
-            '{{ rootNamespace }}' => $rootNamespace,
-            '{{rootNamespace}}' => $rootNamespace,
+    /**
+     * Build the class with the given name.
+     *
+     * @param  string  $name
+     * @return string
+     */
+    protected function buildClass($name)
+    {
+        $stub = $this->files->get($this->getStub());
 
-            'NamespacedDummyUserModel' => $userModel,
-            '{{ namespacedUserModel }}' => $userModel,
-            '{{namespacedUserModel}}' => $userModel,
+        $stub = $this
+            ->replaceNamespace($stub, $name)
+            ->replaceClass($stub, $name);
 
-            'DummyUser' => class_basename($userModel),
-            '{{ user }}' => class_basename($userModel),
-        ];
+        return $this->replaceExtra($stub, $name);
+    }
 
-        if ($this->hasOption('model')) {
+    /**
+     * Replace any extra vars in the stub.
+     *
+     * @param $stub
+     * @param $name
+     * @return $this
+     */
+    protected function replaceExtra($stub, $name)
+    {
+        return $stub;
+    }
 
-            $model = $this->option('model') ? $this->option('model') : 'Model';
-
-            $namespaceModel = $this->getModule()->namespace('models').'\\'.$model;
-
-            $model = class_basename($namespaceModel);
-
-            $modelVariable = lcfirst($model);
-
-            $replacements = array_merge($replacements, [
-                'NamespacedDummyModel' => $namespaceModel,
-                '{{ namespacedModel }}' => $namespaceModel,
-                '{{namespacedModel}}' => $namespaceModel,
-                'DummyModel' => $model,
-                '{{ model }}' => $model,
-                '{{model}}' => $model,
-                'dummyModel' => $modelVariable,
-                'DummyModelVariable' => $modelVariable,
-                '{{ modelVariable }}' => $modelVariable,
-                '{{modelVariable}}' => $modelVariable
-            ]);
-        }
-
-        return $replacements;
+    protected function getBaseClass($key, $default)
+    {
+        return config('modular.base.'.$key, $default);
     }
 
     /**
@@ -123,26 +95,6 @@ trait GeneratesForModule
     }
 
     /**
-     * Build the class with the given name.
-     *
-     * @param  string  $name
-     * @return string
-     */
-    protected function buildClass($name)
-    {
-        $stub = $this->files->get($this->getStub());
-
-        $replacements = $this->getDefaultReplacements($name);
-        $replacements = $this->getReplacements($replacements);
-
-        $stub = str_replace(
-            array_keys($replacements), array_values($replacements), $stub
-        );
-
-        return $stub;
-    }
-
-    /**
      * Get the destination class path.
      *
      * @param  string  $name
@@ -152,39 +104,8 @@ trait GeneratesForModule
     {
         $name = str_replace('.php', '', $name);
 
-        // Allow for handling namespaced class, module path or relative path
-        $pathed = str_replace('\\', '/', $name);
+        $relativeNamespacedClass = ltrim(Str::replaceFirst($this->rootNamespace(), '', $name), '\\');
 
-        $namespacedClass = Namespaces::namespaceFromPath($pathed);
-
-        // If fully namespaced and starts with module namespace,
-        // it should use the namespaced class path
-        $moduleNamespace = $this->getModule()->namespace;
-        if ($name != $moduleNamespace && Str::of($namespacedClass)->contains($moduleNamespace)) {
-            $relativeNamespacedClass = str_replace($moduleNamespace, '', $namespacedClass);
-            return $this->getModule()->path().'/'.Namespaces::namespaceToPath($relativeNamespacedClass).'.php';
-        }
-
-        // File will go in target path
-        return $this->getTargetPath().'/'.Namespaces::namespaceToPath($namespacedClass).'.php';
-    }
-
-    /**
-     * Return the qualified class based on the path
-     *
-     * @param  string  $path
-     * @return string
-     */
-    protected function qualifyClass($path)
-    {
-        $module = $this->getModule();
-
-        // Get relative path from module root
-        $relative = ltrim(str_replace($module->get('paths.module'), '', $path), '/');
-        $namespace = Namespaces::namespaceFromPath($relative);
-
-        // Combine module namespace, relative namespace and class name
-        $class = pathinfo($path, PATHINFO_FILENAME);
-        return Namespaces::namespaceCombine($module->namespace, $namespace).'\\'.$class;
+        return $this->getModule()->getPath().'/'.Namespaces::toPath($relativeNamespacedClass).'.php';
     }
 }
