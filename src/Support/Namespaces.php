@@ -56,4 +56,16 @@ class Namespaces
 
         return $path;
     }
+
+    /**
+     * Get the class name from a fully namespaced class
+     * 
+     * @param string $namespace
+     * @return mixed|string
+     */
+    public static function className(string $namespace)
+    {
+        $parts = explode('\\', $namespace);
+        return array_pop($parts);
+    }
 }

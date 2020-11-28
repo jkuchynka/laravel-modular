@@ -25,4 +25,9 @@ class NamespacesTest extends BaseTestCase
         $this->assertEquals('Foo/Http/Controllers', Namespaces::toPath('Foo\Http\Controllers'));
         $this->assertEquals('Foo/Http/Controllers', Namespaces::toPath('Foo\Http\Controllers\FooController', true));
     }
+
+    public function testClassName()
+    {
+        $this->assertEquals('FooBar', Namespaces::className('Foo\Bar\FooBar'));
+    }
 }
