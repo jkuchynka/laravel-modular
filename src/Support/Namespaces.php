@@ -5,18 +5,20 @@ namespace Modular\Support;
 class Namespaces
 {
     /**
-     * Gets the namespace of a class from a relative path
+     * Gets the namespace of a class from a file path
      *
      * @param  string $path
      * @return string
      */
-    public static function namespaceFromPath(string $path)
+    public static function fromPath(string $path)
     {
         $parts = explode('/', $path);
+
         // Check if contains filename
         if (pathinfo($path, PATHINFO_EXTENSION)) {
             array_pop($parts);
         }
+
         return trim(implode('\\', $parts), '\\');
     }
 
@@ -27,9 +29,11 @@ class Namespaces
      * @param  string $namespace
      * @return string
      */
-    public static function namespaceCombine(string $baseNamespace, string $namespace)
+    public static function combine(string $baseNamespace, string $namespace)
     {
-        return ltrim($baseNamespace.rtrim('\\'.$namespace, '\\'), '\\');
+        $baseNamespace = rtrim($baseNamespace, '\\');
+        $namespace = trim($namespace, '\\');
+        return $namespace ? $baseNamespace.'\\'.$namespace : $baseNamespace;
     }
 
     /**
@@ -39,12 +43,17 @@ class Namespaces
      * @param  bool $stripClass
      * @return string
      */
-    public static function namespaceToPath(string $namespace, bool $stripClass = false)
+    public static function toPath(string $namespace, bool $stripClass = false)
     {
         $namespace = trim($namespace, '\\');
+        $path = str_replace('\\', '/', preg_replace('/\\.*?/', '', $namespace));
+
         if ($stripClass) {
-            return str_replace('\\', '/', $namespace);
+            $parts = explode('/', $path);
+            array_pop($parts);
+            $path = implode('/', $parts);
         }
-        return str_replace('\\', '/', preg_replace('/\\.*?/', '', $namespace));
+
+        return $path;
     }
 }
