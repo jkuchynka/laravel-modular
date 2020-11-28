@@ -59,7 +59,7 @@ class Namespaces
 
     /**
      * Get the class name from a fully namespaced class
-     * 
+     *
      * @param string $namespace
      * @return mixed|string
      */

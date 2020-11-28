@@ -2,53 +2,39 @@
 
 namespace Modular\Console\Commands;
 
-use Illuminate\Contracts\Filesystem\FileNotFoundException;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Foundation\Console\ModelMakeCommand as BaseCommand;
 use Illuminate\Support\Str;
+use Modular\Console\Commands\Concerns\GeneratesForModule;
+use Modular\Support\Namespaces;
 use Symfony\Component\Console\Input\InputOption;
 
 class ModelMakeCommand extends BaseCommand
 {
     use Concerns\HasModuleArgument;
-    use Concerns\GeneratesForModule {
-        handle as generatesHandle;
-    }
+    use GeneratesForModule;
 
     /**
-     * Execute the console command
+     * Replace any extra vars in the stub.
      *
-     * @return false|void
-     * @throws FileNotFoundException
+     * @param $stub
+     * @param $name
+     * @return string
      */
-    public function handle()
+    protected function replaceExtra($stub, $name)
     {
-        if ($this->generatesHandle() === false && ! $this->option('force')) {
-            return;
+        $baseClass = $this->getBaseClass('model', Model::class);
+
+        $searches = [
+            '{{ BaseModel }}' => $baseClass,
+            '{{ BaseModelClass }}' => Namespaces::className($baseClass),
+        ];
+
+        foreach ($searches as $key => $val) {
+            $stub = str_replace($key, $val, $stub);
         }
 
-         if ($this->option('all')) {
-            $this->input->setOption('factory', true);
-            $this->input->setOption('seed', true);
-            $this->input->setOption('migration', true);
-            $this->input->setOption('controller', true);
-            $this->input->setOption('resource', true);
-        }
-
-        if ($this->option('factory')) {
-            $this->createFactory();
-        }
-
-        if ($this->option('migration')) {
-            $this->createMigration();
-        }
-
-        if ($this->option('seed')) {
-            $this->createSeeder();
-        }
-
-        if ($this->option('controller') || $this->option('resource') || $this->option('api')) {
-            $this->createController();
-        }
+        return $stub;
     }
 
     /**
@@ -58,7 +44,18 @@ class ModelMakeCommand extends BaseCommand
      */
     protected function getTargetPath()
     {
-        return $this->getModule()->get('paths.models');
+        return $this->getModule()->getPath('models');
+    }
+
+    /**
+     * Get the default namespace for the class.
+     *
+     * @param  string  $rootNamespace
+     * @return string
+     */
+    protected function getDefaultNamespace($rootNamespace)
+    {
+        return $this->getModule()->getNamespace('models');
     }
 
     /**
