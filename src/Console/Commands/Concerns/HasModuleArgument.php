@@ -3,6 +3,7 @@
 namespace Modular\Console\Commands\Concerns;
 
 use Modular\Modular;
+use Modular\Module;
 use Symfony\Component\Console\Input\InputArgument;
 
 trait HasModuleArgument
@@ -23,9 +24,8 @@ trait HasModuleArgument
     }
 
     /**
-     * Get the current module config
-     *
-     * @return Dot
+     * Get the module from the argument
+     * @return Module
      */
     protected function getModule()
     {

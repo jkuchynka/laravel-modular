@@ -3,9 +3,8 @@
 namespace Modular\Tests;
 
 use Modular\Exceptions\InvalidModuleException;
+use Modular\Module;
 use Modular\ModuleConfig;
-use Modular\Tests\stubs\InvalidNoKeyModule;
-use Modular\Tests\stubs\InvalidNoNameModule;
 use Modular\Tests\stubs\Posts\PostsModule;
 
 class ModuleTest extends BaseTestCase
@@ -14,14 +13,28 @@ class ModuleTest extends BaseTestCase
     {
         $this->expectException(InvalidModuleException::class);
 
-        new InvalidNoKeyModule($this->app);
+        new class($this->app) extends Module {
+            protected $name = 'Missing Key';
+
+            protected function config(): array
+            {
+                return [];
+            }
+        };
     }
 
     public function testRequiresName()
     {
         $this->expectException(InvalidModuleException::class);
 
-        new InvalidNoNameModule($this->app);
+        new class($this->app) extends Module {
+            protected $key = 'missing_name';
+
+            protected function config(): array
+            {
+                return [];
+            }
+        };
     }
 
     public function testBootSetsConfig()
@@ -30,34 +43,56 @@ class ModuleTest extends BaseTestCase
         $module->boot();
 
         $this->assertInstanceOf(ModuleConfig::class, $module->getConfig());
+        $this->assertEquals(__DIR__.'/stubs/Posts', $module->get('paths.module'));
+        $this->assertEquals('Handles posts', $module->get('description'));
+        $this->assertEquals(1.1, $module->get('version'));
+        $this->assertEquals('Migrations', $module->get('paths.migrations'));
     }
 
-//    public function test_set_default_config()
-//    {
-//        $module = new Module;
-//        $ret = $module->setDefaultConfig('foo_bar');
-//
-//        $this->assertInstanceOf(Module::class, $ret);
-//
-//        $this->assertEquals('Database/Migrations', $module['paths.migrations']);
-//        $this->assertEquals('foo_bar', $module['key']);
-//        $this->assertEquals('FooBar', $module['name']);
-//        $this->assertEquals('App\\FooBar', $module['namespace']);
-//
-//        $module->setDefaultConfig('base');
-//        $this->assertEquals('Base', $module['namespace']);
-//    }
-//
-//    public function test_class_fully_namespaced()
-//    {
-//        $module = new Module;
-//        $module->setDefaultConfig('foo');
-//        $module['paths.bar'] = 'Bar';
-//
-//        $this->assertEquals('App\\Foo\\Bar\\Baz', $module->classFullyNamespaced('Baz', 'bar'));
-//
-//        $this->assertEquals('App\\Foo\\Bar\\Baz', $module->classFullyNamespaced('App\\Foo\\Bar\\Baz', 'bar'));
-//
-//        $this->assertEquals('App\\Foo\\Bar\\Baz\\Qux', $module->classFullyNamespaced('Baz\\Qux', 'bar'));
-//    }
+    public function testBootOverridesModuleConfig()
+    {
+        $module = new class($this->app) extends Module {
+            protected $key = 'foobar';
+
+            protected $name = 'FooBar';
+
+            protected function config(): array
+            {
+                return [
+                    'test' => 123,
+                ];
+            }
+        };
+
+        $module->boot(['test' => 'newval']);
+
+        $this->assertEquals('newval', $module->get('test'));
+    }
+
+    public function testGetNamespace()
+    {
+        $module = new PostsModule($this->app);
+        $module->boot();
+
+        $this->assertEquals('Modular\Tests\stubs\Posts', $module->getNamespace());
+        $this->assertEquals('Modular\Tests\stubs\Posts\Models', $module->getNamespace('models'));
+    }
+
+    public function testGetPath()
+    {
+        $module = new PostsModule($this->app);
+        $module->boot();
+
+        $this->assertEquals(__DIR__.'/stubs/Posts', $module->getPath());
+        $this->assertEquals(__DIR__.'/stubs/Posts/Http/Controllers', $module->getPath('controllers'));
+        $this->assertEquals('Http/Controllers', $module->getPath('controllers', true));
+    }
+
+    public function test__getGetsFromConfig()
+    {
+        $module = new PostsModule($this->app);
+        $module->boot();
+
+        $this->assertNull($module->foo_bar_123);
+    }
 }

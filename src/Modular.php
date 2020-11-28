@@ -49,8 +49,9 @@ class Modular
     /**
      * Get a loaded module by key
      *
-     * @param  string $key
-     * @return Module
+     * @param $key
+     * @return \Modular\Module
+     * @throws ModuleNotFoundException
      */
     public function getModule($key): Module
     {
@@ -65,7 +66,12 @@ class Modular
         throw new ModuleNotFoundException('Module: '.$key.' not installed.');
     }
 
-    public function getModules()
+    /**
+     * Get loaded modules
+     *
+     * @return array
+     */
+    public function getModules(): array
     {
         return $this->modules;
     }

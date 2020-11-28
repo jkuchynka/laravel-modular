@@ -3,7 +3,7 @@
 namespace Modular\Providers;
 
 use \Illuminate\Foundation\Support\Providers\RouteServiceProvider as BaseRouteServiceProvider;
-use Modular\Modular;
+use Modular\Concerns\LoadsRoutes;
 
 class RouteServiceProvider extends BaseRouteServiceProvider
 {
@@ -14,12 +14,42 @@ class RouteServiceProvider extends BaseRouteServiceProvider
      */
     protected $namespace;
 
-    protected function loadRoutes()
+    protected static $loadRoutes = true;
+
+    /**
+     * Set whether to load routes from modules
+     *
+     * @param $loadRoutes
+     */
+    public static function setLoadRoutes($loadRoutes)
     {
-        $modular = $this->app->make(Modular::class);
-        $modules = $modular->getModules();
-        foreach ($modules as $module) {
-            $module->loadRoutes();
+        static::$loadRoutes = $loadRoutes;
+    }
+
+    /**
+     * Define your route model bindings, pattern filters, etc.
+     *
+     * @return void
+     */
+    public function boot()
+    {
+        if (! static::$loadRoutes) {
+            return;
         }
+
+        $modular = $this->app->make('modular');
+        $modules = $modular->getModules();
+        $this->routes(function () use ($modules) {
+            foreach ($modules as $module) {
+                if (in_array(
+                    LoadsRoutes::class,
+                    class_uses($module)
+                )) {
+                    $module->loadRoutes();
+                }
+//                Route::middleware('web')
+//                    ->group($module->get('paths.module').'/routes.web.php');
+            }
+        });
     }
 }

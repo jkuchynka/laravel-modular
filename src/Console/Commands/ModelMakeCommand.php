@@ -2,9 +2,9 @@
 
 namespace Modular\Console\Commands;
 
+use Illuminate\Contracts\Filesystem\FileNotFoundException;
 use Illuminate\Foundation\Console\ModelMakeCommand as BaseCommand;
 use Illuminate\Support\Str;
-use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputOption;
 
 class ModelMakeCommand extends BaseCommand
@@ -15,9 +15,10 @@ class ModelMakeCommand extends BaseCommand
     }
 
     /**
-     * Execute the console command.
+     * Execute the console command
      *
-     * @return void
+     * @return false|void
+     * @throws FileNotFoundException
      */
     public function handle()
     {
@@ -57,7 +58,7 @@ class ModelMakeCommand extends BaseCommand
      */
     protected function getTargetPath()
     {
-        return $this->getModule()->path('models');
+        return $this->getModule()->get('paths.models');
     }
 
     /**

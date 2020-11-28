@@ -2,9 +2,12 @@
 
 namespace Modular;
 
+use Adbar\Dot;
 use Illuminate\Container\Container;
+use Illuminate\Support\Str;
 use Modular\Concerns\LoadsRoutes;
 use Modular\Exceptions\InvalidModuleException;
+use Modular\Support\Namespaces;
 
 abstract class Module
 {
@@ -60,22 +63,63 @@ abstract class Module
         return $this->config->get($key, $default);
     }
 
+    /**
+     * Get the module config
+     *
+     * @return ModuleConfig
+     */
     public function getConfig()
     {
         return $this->config;
     }
 
     /**
-     * Get the full module path for a type
+     * Get the module's full namespace for a type
      *
      * @param string|null $type
      * @return string
      */
-    public function getPath(string $type = null)
+    public function getNamespace(string $type = null)
     {
+        return $type ? Namespaces::combine(
+            $this->get('namespace'),
+            Namespaces::fromPath($this->getPath($type, true))
+        ) : $this->get('namespace');
+    }
+
+    /**
+     * Get a fully namespaced class
+     *
+     * @param string $class
+     * @param string $type
+     *   Path type
+     * @return string
+     */
+    public function classFullyNamespaced(string $class, string $type)
+    {
+        $base = $this->getNamespace();
+        // Check if class is already fully namespaced
+        if (preg_match('/^'.Str::of($base)->replace('\\', '\\\\').'/', $class)) {
+            return $class;
+        }
+
+        return Namespaces::combine($this->getNamespace($type), $class);
+    }
+
+    /**
+     * Get the full module path for a type
+     *
+     * @param string|null $type
+     * @param bool $relative
+     * @return string
+     */
+    public function getPath(string $type = null, bool $relative = false)
+    {
+        $modulePath = $relative ? '' : $this->get('paths.module').'/';
         $path = $type ?
-            $this->config['paths.module'].'/'.$this->config['paths.'.$type] :
-            $this->config['paths.module'];
+            $modulePath.$this->get('paths.'.$type) :
+            $modulePath;
+
         return (string) rtrim($path, '/');
     }
 

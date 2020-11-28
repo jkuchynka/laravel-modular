@@ -13,9 +13,18 @@ class PostsModule extends Module
 
     protected $name = 'Posts';
 
+    protected $description = 'Handles posts';
+
+    protected $version = 1.1;
+
     protected function config() : array
     {
-        return [];
+        return [
+            'paths' => [
+                'migrations' => 'Migrations',
+            ],
+            'namespace' => 'Modular\Tests\stubs\Posts',
+        ];
     }
 
     protected function routes(): array

@@ -185,6 +185,6 @@ trait GeneratesForModule
 
         // Combine module namespace, relative namespace and class name
         $class = pathinfo($path, PATHINFO_FILENAME);
-        return Namespaces::namespaceCombine($module->namespace(), $namespace).'\\'.$class;
+        return Namespaces::namespaceCombine($module->namespace, $namespace).'\\'.$class;
     }
 }
