@@ -3,11 +3,11 @@
 namespace Modular\Console\Commands;
 
 use Illuminate\Foundation\Console\ExceptionMakeCommand as BaseCommand;
+use Modular\Console\Commands\Concerns\GeneratesForModule;
 
 class ExceptionMakeCommand extends BaseCommand
 {
-    use Concerns\HasModuleArgument,
-        Concerns\GeneratesForModule;
+    use GeneratesForModule;
 
     /**
      * Get the path for the built class

@@ -3,11 +3,11 @@
 namespace Modular\Console\Commands;
 
 use Illuminate\Console\GeneratorCommand;
+use Modular\Console\Commands\Concerns\GeneratesForModule;
 
 class QueryMakeCommand extends GeneratorCommand
 {
-    use Concerns\HasModuleArgument,
-        Concerns\GeneratesForModule;
+    use GeneratesForModule;
 
     /**
      * Get the stub file for the generator.

@@ -3,13 +3,13 @@
 namespace Modular\Console\Commands;
 
 use Illuminate\Database\Console\Seeds\SeederMakeCommand as BaseCommand;
+use Modular\Console\Commands\Concerns\GeneratesForModule;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputOption;
 
 class SeederMakeCommand extends BaseCommand
 {
-    use Concerns\HasModuleArgument,
-        Concerns\GeneratesForModule;
+    use GeneratesForModule;
 
     /**
      * Get the stub file for the generator.

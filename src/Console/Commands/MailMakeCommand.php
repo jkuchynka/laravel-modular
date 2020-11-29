@@ -3,13 +3,11 @@
 namespace Modular\Console\Commands;
 
 use Illuminate\Foundation\Console\MailMakeCommand as BaseCommand;
+use Modular\Console\Commands\Concerns\GeneratesForModule;
 
 class MailMakeCommand extends BaseCommand
 {
-    use Concerns\HasModuleArgument;
-    use Concerns\GeneratesForModule {
-        handle as generatesHandle;
-    }
+    use GeneratesForModule;
 
     /**
      * Get the replacement variables for the stub
@@ -32,7 +30,7 @@ class MailMakeCommand extends BaseCommand
      */
     public function handle()
     {
-        if ($this->generatesHandle() === false && ! $this->option('force')) {
+        if (parent::handle() === false && ! $this->option('force')) {
             return;
         }
 

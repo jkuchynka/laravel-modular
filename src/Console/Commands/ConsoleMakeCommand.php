@@ -4,12 +4,11 @@ namespace Modular\Console\Commands;
 
 use Illuminate\Foundation\Console\ConsoleMakeCommand as BaseCommand;
 use Illuminate\Support\Str;
+use Modular\Console\Commands\Concerns\GeneratesForModule;
 
 class ConsoleMakeCommand extends BaseCommand
 {
-    use Concerns\HasModuleArgument,
-        Concerns\GeneratesForModule;
-
+    use GeneratesForModule;
     /**
      * Get the replacement variables for the stub
      *

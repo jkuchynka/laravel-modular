@@ -11,7 +11,6 @@ use Symfony\Component\Console\Input\InputOption;
 
 class ModelMakeCommand extends BaseCommand
 {
-    use Concerns\HasModuleArgument;
     use GeneratesForModule;
 
     /**
@@ -56,6 +55,30 @@ class ModelMakeCommand extends BaseCommand
     protected function getDefaultNamespace($rootNamespace)
     {
         return $this->getModule()->getNamespace('models');
+    }
+
+    /**
+     * Get the stub file for the generator.
+     *
+     * @return string
+     */
+    protected function getStub()
+    {
+        return $this->option('pivot')
+            ? __DIR__.('/stubs/model.pivot.stub')
+            : __DIR__.('/stubs/model.stub');
+    }
+
+    /**
+     * Get the console command options.
+     *
+     * @return array
+     */
+    protected function getOptions()
+    {
+        $options = parent::getOptions();
+        $options[] = ['querybuilder', 'b', InputOption::VALUE_NONE, 'Generate an api controller with query builder methods'];
+        return $options;
     }
 
     /**
@@ -125,29 +148,5 @@ class ModelMakeCommand extends BaseCommand
             '--api' => $this->option('api'),
             '--querybuilder' => $this->option('querybuilder')
         ]));
-    }
-
-    /**
-     * Get the stub file for the generator.
-     *
-     * @return string
-     */
-    protected function getStub()
-    {
-        return $this->option('pivot')
-                    ? __DIR__.('/stubs/model.pivot.stub')
-                    : __DIR__.('/stubs/model.stub');
-    }
-
-    /**
-     * Get the console command options.
-     *
-     * @return array
-     */
-    protected function getOptions()
-    {
-        $options = parent::getOptions();
-        $options[] = ['querybuilder', 'b', InputOption::VALUE_NONE, 'Generate an api controller with query builder methods'];
-        return $options;
     }
 }

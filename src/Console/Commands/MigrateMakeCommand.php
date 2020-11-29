@@ -4,10 +4,11 @@ namespace Modular\Console\Commands;
 
 use Illuminate\Database\Console\Migrations\MigrateMakeCommand as BaseCommand;
 use Illuminate\Support\Facades\File;
+use Modular\Console\Commands\Concerns\GeneratesForModule;
 
 class MigrateMakeCommand extends BaseCommand
 {
-    use Concerns\HasModuleArgument;
+    use GeneratesForModule;
 
     /**
      * The console command signature.

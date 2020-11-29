@@ -3,11 +3,11 @@
 namespace Modular\Console\Commands;
 
 use Illuminate\Foundation\Console\EventMakeCommand as BaseCommand;
+use Modular\Console\Commands\Concerns\GeneratesForModule;
 
 class EventMakeCommand extends BaseCommand
 {
-    use Concerns\HasModuleArgument,
-        Concerns\GeneratesForModule;
+    use GeneratesForModule;
 
     /**
      * Get the path for the built class

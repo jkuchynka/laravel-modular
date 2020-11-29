@@ -4,11 +4,11 @@ namespace Modular\Console\Commands;
 
 use Illuminate\Foundation\Console\TestMakeCommand as BaseCommand;
 use Illuminate\Support\Facades\File;
+use Modular\Console\Commands\Concerns\GeneratesForModule;
 
 class TestMakeCommand extends BaseCommand
 {
-    use Concerns\HasModuleArgument,
-        Concerns\GeneratesForModule;
+    use GeneratesForModule;
 
     /**
      * The console command name.

@@ -7,6 +7,7 @@ use Illuminate\Database\Migrations\MigrationCreator;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Support\Str;
+use Modular\Console\Commands\CastMakeCommand;
 use Modular\Console\Commands\ChannelMakeCommand;
 use Modular\Console\Commands\ConsoleMakeCommand;
 use Modular\Console\Commands\ControllerMakeCommand;
@@ -38,31 +39,32 @@ use Symfony\Component\Finder\Finder;
 class ConsoleServiceProvider extends ServiceProvider
 {
     protected $laravelCommands = [
-        ChannelMakeCommand::class,
-        ConsoleMakeCommand::class,
+        CastMakeCommand::class,
+//        ChannelMakeCommand::class,
+//        ConsoleMakeCommand::class,
         ControllerMakeCommand::class,
-        EventMakeCommand::class,
-        ExceptionMakeCommand::class,
-        FactoryMakeCommand::class,
-        JobMakeCommand::class,
-        ListenerMakeCommand::class,
-        MailMakeCommand::class,
-        MiddlewareMakeCommand::class,
-        MigrateMakeCommand::class,
+//        EventMakeCommand::class,
+//        ExceptionMakeCommand::class,
+//        FactoryMakeCommand::class,
+//        JobMakeCommand::class,
+//        ListenerMakeCommand::class,
+//        MailMakeCommand::class,
+//        MiddlewareMakeCommand::class,
+//        MigrateMakeCommand::class,
         ModelMakeCommand::class,
-        ModuleConfigsCommand::class,
-        ModuleMakeCommand::class,
-        NotificationMakeCommand::class,
-        ObserverMakeCommand::class,
-        PolicyMakeCommand::class,
-        ProviderMakeCommand::class,
-        QueryMakeCommand::class,
-        RequestMakeCommand::class,
-        ResourceMakeCommand::class,
-        RuleMakeCommand::class,
-        SeedCommand::class,
-        SeederMakeCommand::class,
-        TestMakeCommand::class
+//        ModuleConfigsCommand::class,
+//        ModuleMakeCommand::class,
+//        NotificationMakeCommand::class,
+//        ObserverMakeCommand::class,
+//        PolicyMakeCommand::class,
+//        ProviderMakeCommand::class,
+//        QueryMakeCommand::class,
+//        RequestMakeCommand::class,
+//        ResourceMakeCommand::class,
+//        RuleMakeCommand::class,
+//        SeedCommand::class,
+//        SeederMakeCommand::class,
+//        TestMakeCommand::class
     ];
 
     public function boot()

@@ -4,14 +4,13 @@ namespace Modular\Console\Commands;
 
 use Base\Helpers\Common;
 use Illuminate\Routing\Console\ControllerMakeCommand as BaseCommand;
-use Illuminate\Support\Str;
 use InvalidArgumentException;
+use Modular\Console\Commands\Concerns\GeneratesForModule;
 use Symfony\Component\Console\Input\InputOption;
 
 class ControllerMakeCommand extends BaseCommand
 {
-    use Concerns\HasModuleArgument,
-        Concerns\GeneratesForModule;
+    use GeneratesForModule;
 
     /**
      * Get the path for the built class

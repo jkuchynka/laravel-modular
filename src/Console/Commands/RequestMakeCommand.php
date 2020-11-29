@@ -3,11 +3,11 @@
 namespace Modular\Console\Commands;
 
 use Illuminate\Foundation\Console\RequestMakeCommand as BaseCommand;
+use Modular\Console\Commands\Concerns\GeneratesForModule;
 
 class RequestMakeCommand extends BaseCommand
 {
-    use Concerns\HasModuleArgument,
-        Concerns\GeneratesForModule;
+    use GeneratesForModule;
 
     /**
      * Get the replacement variables for the stub

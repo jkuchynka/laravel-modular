@@ -4,11 +4,11 @@ namespace Modular\Console\Commands;
 
 use Illuminate\Foundation\Console\ResourceMakeCommand as BaseCommand;
 use Illuminate\Support\Str;
+use Modular\Console\Commands\Concerns\GeneratesForModule;
 
 class ResourceMakeCommand extends BaseCommand
 {
-    use Concerns\HasModuleArgument,
-        Concerns\GeneratesForModule;
+    use GeneratesForModule;
 
     /**
      * Get the path for the built class

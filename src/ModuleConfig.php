@@ -29,6 +29,7 @@ class ModuleConfig extends Dot
             'seeds' => false,
             'seedsWeight' => 10,
             'paths' => [
+                'casts' => 'Casts',
                 'channels' => 'Broadcasting',
                 'commands' => 'Console/Commands',
                 'controllers' => 'Http/Controllers',

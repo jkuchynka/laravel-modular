@@ -3,13 +3,11 @@
 namespace Modular\Console\Commands;
 
 use Illuminate\Foundation\Console\NotificationMakeCommand as BaseCommand;
+use Modular\Console\Commands\Concerns\GeneratesForModule;
 
 class NotificationMakeCommand extends BaseCommand
 {
-    use Concerns\HasModuleArgument;
-    use Concerns\GeneratesForModule {
-        handle as generatesHandle;
-    }
+    use GeneratesForModule;
 
     /**
      * Execute the console command.
