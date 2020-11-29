@@ -26,7 +26,6 @@ use Modular\Console\Commands\NotificationMakeCommand;
 use Modular\Console\Commands\ObserverMakeCommand;
 use Modular\Console\Commands\PolicyMakeCommand;
 use Modular\Console\Commands\ProviderMakeCommand;
-use Modular\Console\Commands\QueryMakeCommand;
 use Modular\Console\Commands\RequestMakeCommand;
 use Modular\Console\Commands\ResourceMakeCommand;
 use Modular\Console\Commands\RuleMakeCommand;
@@ -58,7 +57,6 @@ class ConsoleServiceProvider extends ServiceProvider
         ObserverMakeCommand::class,
         PolicyMakeCommand::class,
         ProviderMakeCommand::class,
-        QueryMakeCommand::class,
         RequestMakeCommand::class,
         ResourceMakeCommand::class,
         RuleMakeCommand::class,

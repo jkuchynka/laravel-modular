@@ -3,7 +3,6 @@
 namespace Modular\Console\Commands;
 
 use Illuminate\Foundation\Console\TestMakeCommand as BaseCommand;
-use Illuminate\Support\Facades\File;
 use Modular\Console\Commands\Concerns\GeneratesForModule;
 
 class TestMakeCommand extends BaseCommand
@@ -15,29 +14,22 @@ class TestMakeCommand extends BaseCommand
      *
      * @var string
      */
-    protected $signature = 'make:test {module : The name or key of the module} {name : The name of the class} {--unit : Create a unit test}';
+    protected $signature = 'make:test {module : The name or key of the module} {name : The name of the class} {--unit : Create a unit test} {--debug : Debug this command}';
 
     /**
-     * Get the path for the built class
+     * Get the default namespace for the class.
      *
+     * @param  string  $rootNamespace
      * @return string
      */
-    protected function getTargetPath()
+    protected function getDefaultNamespace($rootNamespace)
     {
-        $path = $this->getModule()->path('tests');
-        $path .= $this->option('unit') ? '/Unit' : '/Feature';
-        return $path;
-    }
+        $ns = $this->getModule()->getNamespace('tests');
 
-    /**
-     * Get the stub file for the generator.
-     *
-     * @return string
-     */
-    protected function getStub()
-    {
-        return $this->option('unit')
-                    ? __DIR__.'/stubs/test.unit.stub'
-                    : __DIR__.'/stubs/test.stub';
+        if ($this->option('unit')) {
+            return $ns.'\Unit';
+        } else {
+            return $ns.'\Feature';
+        }
     }
 }

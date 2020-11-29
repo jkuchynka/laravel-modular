@@ -83,6 +83,30 @@ trait GeneratesForModule
     }
 
     /**
+     * Qualify the given model class base name.
+     *
+     * @param  string  $model
+     * @return string
+     */
+    protected function qualifyModel(string $model)
+    {
+        $model = ltrim($model, '\\/');
+
+        $model = str_replace('/', '\\', $model);
+
+        $rootNamespace = $this->rootNamespace();
+
+        if (Str::startsWith($model, $rootNamespace)) {
+            return $model;
+        }
+
+        return Namespaces::combine(
+            $this->getModule()->getNamespace('models'),
+            $model
+        );
+    }
+
+    /**
      * Build the class with the given name.
      *
      * @param  string  $name

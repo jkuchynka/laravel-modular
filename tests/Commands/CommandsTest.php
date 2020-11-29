@@ -170,7 +170,7 @@ class ConsoleCommandsTest extends CommandsTestCase
         $this->assertStringContainsString('class FooBarMiddleware', $contents);
     }
 
-    public function test_migration_make_command()
+    public function testMigrationMakeCommand()
     {
         $this->artisan('make:migration', [
             'module' => 'foo_bar',
@@ -186,7 +186,7 @@ class ConsoleCommandsTest extends CommandsTestCase
         $this->assertStringContainsString('class CreateFooTable ', $contents);
     }
 
-    public function test_notification_make_command()
+    public function testNotificationMakeCommand()
     {
         $this->artisan('make:notification', [
             'module' => 'foo_bar',
@@ -203,7 +203,7 @@ class ConsoleCommandsTest extends CommandsTestCase
         $this->assertStringContainsString('markdown(\'foobar', $contents);
     }
 
-    public function test_observer_make_command()
+    public function testObserverMakeCommand()
     {
         $this->artisan('make:observer', [
             'module' => 'foo_bar',
@@ -219,7 +219,7 @@ class ConsoleCommandsTest extends CommandsTestCase
         $this->assertStringContainsString('Foo $foo', $contents);
     }
 
-    public function test_policy_make_command()
+    public function testPolicyMakeCommand()
     {
         $this->artisan('make:policy', [
             'module' => 'foo_bar',
@@ -236,7 +236,7 @@ class ConsoleCommandsTest extends CommandsTestCase
         $this->assertStringContainsString('User $user, Foo $foo', $contents);
     }
 
-    public function test_provider_make_command()
+    public function testProviderMakeCommand()
     {
         $this->artisan('make:provider', [
             'module' => 'foo_bar',
@@ -249,20 +249,7 @@ class ConsoleCommandsTest extends CommandsTestCase
         $this->assertStringContainsString('class FooBarProvider', $contents);
     }
 
-    public function test_query_make_command()
-    {
-        $this->artisan('make:query', [
-            'module' => 'foo_bar',
-            'name' => 'FooBarQuery'
-        ]);
-
-        $contents = $this->assertCommandPath('Http/Queries/FooBarQuery.php');
-
-        $this->assertStringContainsString('namespace VFS\\FooBar\\Http\\Queries;', $contents);
-        $this->assertStringContainsString('class FooBarQuery', $contents);
-    }
-
-    public function test_request_make_command()
+    public function testRequestMakeCommand()
     {
         $this->artisan('make:request', [
             'module' => 'foo_bar',
@@ -275,7 +262,7 @@ class ConsoleCommandsTest extends CommandsTestCase
         $this->assertStringContainsString('class FooBarRequest', $contents);
     }
 
-    public function test_resource_make_command()
+    public function testResourceMakeCommand()
     {
         $this->artisan('make:resource', [
             'module' => 'foo_bar',
@@ -299,7 +286,7 @@ class ConsoleCommandsTest extends CommandsTestCase
         $this->assertStringContainsString('class FooBarCollection ', $contents);
     }
 
-    public function test_rule_make_command()
+    public function testRuleMakeCommand()
     {
         $this->artisan('make:rule', [
             'module' => 'foo_bar',
@@ -312,7 +299,7 @@ class ConsoleCommandsTest extends CommandsTestCase
         $this->assertStringContainsString('class FooBarRule', $contents);
     }
 
-    public function test_seeder_make_command()
+    public function testSeederMakeCommand()
     {
         $this->artisan('make:seeder', [
             'module' => 'foo_bar',
@@ -325,7 +312,7 @@ class ConsoleCommandsTest extends CommandsTestCase
         $this->assertStringContainsString('class FooBarSeeder ', $contents);
     }
 
-    public function test_test_make_command()
+    public function testTestMakeCommand()
     {
         $this->artisan('make:test', [
             'module' => 'foo_bar',
@@ -335,11 +322,11 @@ class ConsoleCommandsTest extends CommandsTestCase
         $contents = $this->assertCommandPath('Tests/Feature/FooBarTest.php');
 
         $this->assertStringContainsString('namespace VFS\\FooBar\\Tests\\Feature;', $contents);
-        $this->assertStringContainsString('use Base\\Tests\\TestCase;', $contents);
+//        $this->assertStringContainsString('use Base\\Tests\\TestCase;', $contents);
         $this->assertStringContainsString('class FooBarTest', $contents);
     }
 
-    public function test_test_make_command_unit()
+    public function testTestMakeCommandUnit()
     {
         $this->artisan('make:test', [
             'module' => 'foo_bar',
@@ -350,7 +337,7 @@ class ConsoleCommandsTest extends CommandsTestCase
         $contents = $this->assertCommandPath('Tests/Unit/FooBarTest.php');
 
         $this->assertStringContainsString('namespace VFS\\FooBar\\Tests\\Unit;', $contents);
-        $this->assertStringContainsString('use Base\\Tests\\TestCase;', $contents);
+//        $this->assertStringContainsString('use Base\\Tests\\TestCase;', $contents);
         $this->assertStringContainsString('class FooBarTest', $contents);
     }
 }

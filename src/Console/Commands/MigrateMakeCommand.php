@@ -20,7 +20,8 @@ class MigrateMakeCommand extends BaseCommand
         {--table= : The table to migrate}
         {--path= : The location where the migration file should be created}
         {--realpath : Indicate any provided migration file paths are pre-resolved absolute paths}
-        {--fullpath : Output the full path of the migration}';
+        {--fullpath : Output the full path of the migration}
+        {--debug= : Debug this command}';
 
     /**
      * Get migration path (either specified by '--path' option or default location).
@@ -29,12 +30,14 @@ class MigrateMakeCommand extends BaseCommand
      */
     protected function getMigrationPath()
     {
+        $dir = $this->getModule()->getPath('migrations');
+
         if (! is_null($targetPath = $this->input->getOption('path'))) {
-            $path = ! $this->usingRealPath()
-                            ? $this->getTargetPath().'/'.$targetPath
-                            : $targetPath;
+            $path =  ! $this->usingRealPath()
+                ? $dir.'/'.$targetPath
+                : $dir;
         } else {
-            $path = $this->getTargetPath();
+            $path = $dir;
         }
 
         if (! File::exists($path)) {
@@ -42,15 +45,5 @@ class MigrateMakeCommand extends BaseCommand
         }
 
         return $path;
-    }
-
-    /**
-     * Get the path for the built class
-     *
-     * @return string
-     */
-    protected function getTargetPath()
-    {
-        return $this->getModule()->path('migrations');
     }
 }
