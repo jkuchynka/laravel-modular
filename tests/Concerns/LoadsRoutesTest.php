@@ -11,6 +11,8 @@ class LoadsRoutesTest extends BaseTestCase
 {
     protected $module;
 
+    protected $ns = 'Modular\Tests\stubs\Posts';
+
     protected function setUp(): void
     {
         parent::setUp();
@@ -41,8 +43,8 @@ class LoadsRoutesTest extends BaseTestCase
         $this->assertEquals([
             'middleware' => 'web',
             'as' => 'posts.index',
-            'uses' => 'App\Posts\Http\Controllers\PostController@index',
-            'controller' => 'App\Posts\Http\Controllers\PostController@index',
+            'uses' => $this->ns.'\Http\Controllers\PostController@index',
+            'controller' => $this->ns.'\Http\Controllers\PostController@index',
             'namespace' => null,
             'prefix' => '',
             'where' => []
@@ -54,8 +56,8 @@ class LoadsRoutesTest extends BaseTestCase
         $this->assertEquals([
             'middleware' => 'web',
             'as' => 'posts.create',
-            'uses' => 'App\Posts\Http\Controllers\PostController@create',
-            'controller' => 'App\Posts\Http\Controllers\PostController@create',
+            'uses' => $this->ns.'\Http\Controllers\PostController@create',
+            'controller' => $this->ns.'\Http\Controllers\PostController@create',
             'namespace' => null,
             'prefix' => '',
             'where' => []
@@ -67,8 +69,8 @@ class LoadsRoutesTest extends BaseTestCase
         $this->assertEquals([
             'middleware' => 'web',
             'as' => 'posts.show',
-            'uses' => 'App\Posts\Http\Controllers\PostController@show',
-            'controller' => 'App\Posts\Http\Controllers\PostController@show',
+            'uses' => $this->ns.'\Http\Controllers\PostController@show',
+            'controller' => $this->ns.'\Http\Controllers\PostController@show',
             'namespace' => null,
             'prefix' => '',
             'where' => []
@@ -80,8 +82,8 @@ class LoadsRoutesTest extends BaseTestCase
         $this->assertEquals([
             'middleware' => 'web',
             'as' => 'posts.edit',
-            'uses' => 'App\Posts\Http\Controllers\PostController@edit',
-            'controller' => 'App\Posts\Http\Controllers\PostController@edit',
+            'uses' => $this->ns.'\Http\Controllers\PostController@edit',
+            'controller' => $this->ns.'\Http\Controllers\PostController@edit',
             'namespace' => null,
             'prefix' => '',
             'where' => []
@@ -93,8 +95,8 @@ class LoadsRoutesTest extends BaseTestCase
         $this->assertEquals([
             'middleware' => 'web',
             'as' => 'posts.update',
-            'uses' => 'App\Posts\Http\Controllers\PostController@update',
-            'controller' => 'App\Posts\Http\Controllers\PostController@update',
+            'uses' => $this->ns.'\Http\Controllers\PostController@update',
+            'controller' => $this->ns.'\Http\Controllers\PostController@update',
             'namespace' => null,
             'prefix' => '',
             'where' => []
@@ -106,8 +108,8 @@ class LoadsRoutesTest extends BaseTestCase
         $this->assertEquals([
             'middleware' => 'web',
             'as' => 'posts.destroy',
-            'uses' => 'App\Posts\Http\Controllers\PostController@destroy',
-            'controller' => 'App\Posts\Http\Controllers\PostController@destroy',
+            'uses' => $this->ns.'\Http\Controllers\PostController@destroy',
+            'controller' => $this->ns.'\Http\Controllers\PostController@destroy',
             'namespace' => null,
             'prefix' => '',
             'where' => []
@@ -124,8 +126,8 @@ class LoadsRoutesTest extends BaseTestCase
         $this->assertEquals([
             'middleware' => ['api'],
             'as' => 'posts.reports.index',
-            'uses' => 'App\Posts\Http\Controllers\ReportController@index',
-            'controller' => 'App\Posts\Http\Controllers\ReportController@index',
+            'uses' => $this->ns.'\Http\Controllers\ReportController@index',
+            'controller' => $this->ns.'\Http\Controllers\ReportController@index',
             'namespace' => null,
             'prefix' => 'api/posts',
             'where' => []
@@ -142,8 +144,8 @@ class LoadsRoutesTest extends BaseTestCase
         $this->assertEquals([
             'middleware' => ['api'],
             'as' => 'posts.download',
-            'uses' => 'App\Posts\Http\Controllers\ReportController@download',
-            'controller' => 'App\Posts\Http\Controllers\ReportController@download',
+            'uses' => $this->ns.'\Http\Controllers\ReportController@download',
+            'controller' => $this->ns.'\Http\Controllers\ReportController@download',
             'namespace' => null,
             'prefix' => 'api',
             'where' => []
