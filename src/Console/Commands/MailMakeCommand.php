@@ -10,58 +10,15 @@ class MailMakeCommand extends BaseCommand
     use GeneratesForModule;
 
     /**
-     * Get the replacement variables for the stub
+     * Build the class with the given name.
      *
-     * @param array $replacements
-     * @return array
-     */
-    protected function getReplacements($replacements)
-    {
-        if ($this->option('markdown')) {
-            $replacements['DummyView'] = $this->option('markdown');
-        }
-        return $replacements;
-    }
-
-    /**
-     * Execute the console command.
-     *
-     * @return void
-     */
-    public function handle()
-    {
-        if (parent::handle() === false && ! $this->option('force')) {
-            return;
-        }
-
-        if ($this->option('markdown')) {
-            $this->writeMarkdownTemplate();
-        }
-    }
-
-    /**
-     * Get the path for the built class
-     *
+     * @param  string  $name
      * @return string
-     */
-    protected function getTargetPath()
-    {
-        return $this->getModule()->path('mails');
-    }
-
-    /**
-     * Write the Markdown template for the mailable.
      *
-     * @return void
+     * @throws \Illuminate\Contracts\Filesystem\FileNotFoundException
      */
-    protected function writeMarkdownTemplate()
+    protected function buildClass($name)
     {
-        $path = $this->getModule()->path('views').'/'.str_replace('.', '/', $this->option('markdown')).'.blade.php';
-
-        if (! $this->files->isDirectory(dirname($path))) {
-            $this->files->makeDirectory(dirname($path), 0755, true);
-        }
-
-        $this->files->put($path, file_get_contents(__DIR__.'/stubs/markdown.stub'));
+        return parent::buildClass($name);
     }
 }

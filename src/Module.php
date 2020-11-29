@@ -44,6 +44,7 @@ abstract class Module
         $this->config['paths.module'] = $modulePath;
         $this->config['description'] = $this->description;
         $this->config['version'] = $this->version;
+        $this->config['namespace'] = Namespaces::fromClass(static::class);
 
         // If this module has routes, add them to config, where they
         // can be overridden by the modular config

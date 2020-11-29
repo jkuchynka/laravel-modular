@@ -77,20 +77,6 @@ class Modular
     }
 
     /**
-     * Get the modules path
-     *
-     * @return string
-     */
-    public function getModulesPath(): string
-    {
-        $path = $this->app['config']->get('modular.paths.modules', 'app');
-        if ($path[0] === '/' || Str::contains($path, '://')) {
-            return $path;
-        }
-        return base_path().'/'.$path;
-    }
-
-    /**
      * Get the combined version of all modules.
      * @todo:
      *      The theory here is that updating the version of a module,

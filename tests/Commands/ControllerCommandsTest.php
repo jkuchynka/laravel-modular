@@ -1,6 +1,6 @@
 <?php
 
-namespace Base\Tests\Feature\Console;
+namespace Modular\Tests\Commands;
 
 class ControllerCommandsTest extends CommandsTestCase
 {

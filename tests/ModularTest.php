@@ -16,6 +16,7 @@ class ModularTest extends BaseTestCase
     protected function setUp(): void
     {
         parent::setUp();
+
         $this->modular = new Modular($this->app);
         $this->modular->bootModules();
     }

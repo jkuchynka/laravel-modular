@@ -1,16 +1,29 @@
 <?php
 
-namespace Base\Tests\Feature\Console;
+namespace Modular\Tests\Commands;
 
 class ConsoleCommandsTest extends CommandsTestCase
 {
-    protected $namespacedUser = 'use App\\Users\\Models\\User;';
+    protected $namespacedUser = 'use Illuminate\Foundation\Auth\User;';
 
-    public function test_channel_make_command()
+    public function testCastMakeCommand()
+    {
+        $this->artisan('make:cast', [
+            'module' => 'foo_bar',
+            'name' => 'FooBarCast',
+        ]);
+
+        $contents = $this->assertCommandPath('Casts/FooBarCast.php');
+
+        $this->assertStringContainsString('namespace VFS\\FooBar\\Casts;', $contents);
+        $this->assertStringContainsString('class FooBarCast', $contents);
+    }
+
+    public function testChannelMakeCommand()
     {
         $this->artisan('make:channel', [
             'module' => 'foo_bar',
-            'name' => 'FooBarChannel'
+            'name' => 'FooBarChannel',
         ]);
 
         $contents = $this->assertCommandPath('Broadcasting/FooBarChannel.php');
@@ -21,34 +34,34 @@ class ConsoleCommandsTest extends CommandsTestCase
         $this->assertStringContainsString('User $user', $contents);
     }
 
-    public function test_console_make_command()
+    public function testConsoleMakeCommand()
     {
         $this->artisan('make:command', [
             'module' => 'foo_bar',
-            'name' => 'FooBarCommand'
+            'name' => 'BazQux',
         ]);
 
-        $contents = $this->assertCommandPath('Console/Commands/FooBarCommand.php');
+        $contents = $this->assertCommandPath('Console/Commands/BazQux.php');
 
         $this->assertStringContainsString('namespace VFS\\FooBar\\Console\\Commands;', $contents);
-        $this->assertStringContainsString('class FooBarCommand ', $contents);
-        $this->assertStringContainsString('$name = \'foo_bar:foo-bar', $contents);
+        $this->assertStringContainsString('class BazQux ', $contents);
+        $this->assertStringContainsString('$signature = \'foo_bar:baz-qux', $contents);
     }
 
-    public function test_event_make_command()
+    public function testEventMakeCommand()
     {
         $this->artisan('make:event', [
             'module' => 'foo_bar',
-            'name' => 'FooBarEvent'
+            'name' => 'BazQux'
         ]);
 
-        $contents = $this->assertCommandPath('Events/FooBarEvent.php');
+        $contents = $this->assertCommandPath('Events/BazQux.php');
 
         $this->assertStringContainsString('namespace VFS\\FooBar\\Events;', $contents);
-        $this->assertStringContainsString('class FooBarEvent', $contents);
+        $this->assertStringContainsString('class BazQux', $contents);
     }
 
-    public function test_exception_make_command()
+    public function testExceptionMakeCommand()
     {
         $this->artisan('make:exception', [
             'module' => 'foo_bar',
@@ -61,17 +74,17 @@ class ConsoleCommandsTest extends CommandsTestCase
         $this->assertStringContainsString('class FooBarException ', $contents);
     }
 
-    public function test_factory_make_command()
+    public function testFactoryMakeCommand()
     {
         $this->artisan('make:factory', [
             'module' => 'foo_bar',
-            'name' => 'FooBarFactory'
+            'name' => 'BazQuxFactory'
         ]);
 
-        $contents = $this->assertCommandPath('Database/Factories/FooBarFactory.php');
+        $contents = $this->assertCommandPath('Database/Factories/BazQuxFactory.php');
 
-        $this->assertStringContainsString('use VFS\\FooBar\\Models\\Model', $contents);
-        $this->assertStringContainsString('define(Model', $contents);
+        $this->assertStringContainsString('use VFS\\FooBar\\Models\\BazQux', $contents);
+        $this->assertStringContainsString('$model = BazQux::class', $contents);
 
         $this->artisan('make:factory', [
             'module' => 'foo_bar',
@@ -82,10 +95,10 @@ class ConsoleCommandsTest extends CommandsTestCase
         $contents = $this->assertCommandPath('Database/Factories/FooFactory.php');
 
         $this->assertStringContainsString('use VFS\\FooBar\\Models\\Foo', $contents);
-        $this->assertStringContainsString('define(Foo', $contents);
+        $this->assertStringContainsString('$model = Foo::class', $contents);
     }
 
-    public function test_job_make_command()
+    public function testJobMakeCommand()
     {
         $this->artisan('make:job', [
             'module' => 'foo_bar',
@@ -98,7 +111,7 @@ class ConsoleCommandsTest extends CommandsTestCase
         $this->assertStringContainsString('class FooBarJob ', $contents);
     }
 
-    public function test_listener_make_command()
+    public function testListenerMakeCommand()
     {
         $this->artisan('make:listener', [
             'module' => 'foo_bar',
@@ -111,7 +124,7 @@ class ConsoleCommandsTest extends CommandsTestCase
         $this->assertStringContainsString('class FooBarListener', $contents);
     }
 
-    public function test_listener_make_command_event()
+    public function testListenerMakeCommandEvent()
     {
         $this->artisan('make:listener', [
             'module' => 'foo_bar',
@@ -127,7 +140,7 @@ class ConsoleCommandsTest extends CommandsTestCase
         $this->assertStringContainsString('FooBarEvent $event', $contents);
     }
 
-    public function test_mail_make_command()
+    public function testMailMakeCommand()
     {
         $this->artisan('make:mail', [
             'module' => 'foo_bar',
@@ -144,7 +157,7 @@ class ConsoleCommandsTest extends CommandsTestCase
         $this->assertStringContainsString('markdown(\'foobar', $contents);
     }
 
-    public function test_middleware_make_command()
+    public function testMiddlewareMakeCommand()
     {
         $this->artisan('make:middleware', [
             'module' => 'foo_bar',

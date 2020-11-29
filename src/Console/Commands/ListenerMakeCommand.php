@@ -5,6 +5,7 @@ namespace Modular\Console\Commands;
 use Illuminate\Foundation\Console\ListenerMakeCommand as BaseCommand;
 use Illuminate\Support\Str;
 use Modular\Console\Commands\Concerns\GeneratesForModule;
+use Modular\Support\Namespaces;
 
 class ListenerMakeCommand extends BaseCommand
 {
@@ -41,12 +42,36 @@ class ListenerMakeCommand extends BaseCommand
     }
 
     /**
-     * Get the path for the built class
+     * Build the class with the given name.
      *
+     * @param  string  $name
      * @return string
      */
-    protected function getTargetPath()
+    protected function buildClass($name)
     {
-        return $this->getModule()->path('listeners');
+        $event = $this->option('event') ? $this->option('event') : 'Event';
+
+        if (! Str::startsWith($event, [
+            $this->laravel->getNamespace(),
+            'Illuminate',
+            '\\',
+        ])) {
+            $event = Namespaces::combine(
+                $this->getModule()->getNamespace('events'),
+                $event
+            );
+        }
+
+        $stub = $this->files->get($this->getStub());
+
+        $stub = $this->replaceNamespace($stub, $name)->replaceClass($stub, $name);
+
+        $stub = str_replace(
+            'DummyEvent', class_basename($event), $stub
+        );
+
+        return str_replace(
+            'DummyFullEvent', trim($event, '\\'), $stub
+        );
     }
 }

@@ -10,17 +10,20 @@ class ModuleConfig extends Dot
     public function __construct($key)
     {
         parent::__construct();
+
         $this->init($key);
     }
 
     /**
      * Initialize default config settings
+     *
      * @param string $key
      * @return $this
      */
     protected function init(string $key)
     {
         $name = Str::studly($key);
+
         $this->items = [
             'key' => $key,
             'name' => $name,
@@ -54,7 +57,6 @@ class ModuleConfig extends Dot
                 'tests' => 'Tests',
                 'views' => 'Views'
             ],
-            'namespace' => 'App\\'.$name,
             'routesPrefix' => $key,
             'routes' => [],
             'defaultController' => Str::singular($name).'Controller'

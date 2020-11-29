@@ -57,6 +57,14 @@ class Namespaces
         return $path;
     }
 
+    public static function fromClass(string $className)
+    {
+        $parts = explode('\\', $className);
+        array_pop($parts);
+
+        return implode('\\', $parts);
+    }
+
     /**
      * Get the class name from a fully namespaced class
      *

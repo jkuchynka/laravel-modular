@@ -1,18 +1,14 @@
 <?php
 
-namespace Base\Tests\Feature\Console;
+namespace Modular\Tests\Commands;
 
-use Base\Modules\ModulesService;
-use Base\Tests\TestCase;
+use Modular\Modular;
+use Modular\Providers\ConsoleServiceProvider;
+use Modular\Tests\BaseTestCase;
 use org\bovigo\vfs\vfsStream;
 use org\bovigo\vfs\vfsStreamFile;
 use org\bovigo\vfs\visitor\vfsStreamStructureVisitor;
 use Illuminate\Config\Repository;
-use Symfony\Component\Yaml\Yaml;
-
-$module = Modular\Modular::module('users');
-
-$module->get('name')
 
 // Autoloads classes in VFS namespace from vfsStream filesystem
 spl_autoload_register(function ($class) {
@@ -21,7 +17,7 @@ spl_autoload_register(function ($class) {
     }
 });
 
-abstract class CommandsTestCase extends TestCase
+abstract class CommandsTestCase extends BaseTestCase
 {
     protected $loadModules = ['base', 'foo_bar'];
 
@@ -32,33 +28,52 @@ abstract class CommandsTestCase extends TestCase
         static::$root = vfsStream::setup();
     }
 
-    protected function beforeTest()
+    protected function setUp(): void
     {
+        parent::setUp();
+
         // Clear the VFS filesystem
         if (static::$root->hasChild('FooBar')) {
             static::$root->removeChild('FooBar');
         }
 
-        // Rebind modulesService to our own with custom config
-        $this->app->singleton('modules', function ($app) {
-            $config = $app->make(Repository::class);
-            $config->set('modules', [
-                'modules' => [
-                    'base' => [],
-                    'foo_bar' => [
-                        'paths' => [
-                            'module' => vfsStream::url('root/FooBar')
-                        ],
-                        'namespace' => 'VFS\\FooBar'
-                    ]
-                ]
-            ]);
-            $yaml = $app->make(Yaml::class);
-            $modulesService = new ModulesService($config, $yaml);
-            $modulesService->loadModules($modulesService->getEnabledModules());
+        mkdir(vfsStream::url('root/FooBar'));
+        file_put_contents(vfsStream::url('root/FooBar/FooBar.php'), <<<EOL
+<?php
 
-            return $modulesService;
+namespace VFS\FooBar;
+
+use Modular\Module;
+
+class FooBar extends Module
+{
+    protected \$key = 'foo_bar';
+
+    protected \$name = 'FooBar';
+
+    protected function config(): array
+    {
+        return [];
+    }
+}
+EOL
+);
+
+        // Boot VFS module
+        $this->app->singleton('modular', function ($app) {
+            $config = $app->make(Repository::class);
+            $config->set('modular', [
+                'modules' => [
+                    'VFS\FooBar\FooBar',
+                ],
+            ]);
+
+            $modular = new Modular($app);
+            $modular->bootModules();
+            return $modular;
         });
+
+        $this->app->register(ConsoleServiceProvider::class);
     }
 
     static public function tearDownAfterClass(): void

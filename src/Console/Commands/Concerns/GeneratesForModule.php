@@ -63,7 +63,8 @@ trait GeneratesForModule
      */
     protected function getDefaultNamespace($rootNamespace)
     {
-        $type = Str::plural(Str::lower($this->type));
+        $type = isset($this->modularType) ? $this->modularType : $this->type;
+        $type = Str::plural(Str::lower($type));
 
         return $this->getModule()->getNamespace($type);
     }
@@ -139,6 +140,17 @@ trait GeneratesForModule
         $relativeNamespacedClass = ltrim(Str::replaceFirst($this->rootNamespace(), '', $name), '\\');
 
         return $this->getModule()->getPath().'/'.Namespaces::toPath($relativeNamespacedClass).'.php';
+    }
+
+    /**
+     * Get the first view directory path from the application configuration.
+     *
+     * @param  string  $path
+     * @return string
+     */
+    protected function viewPath($path = '')
+    {
+        return $this->getModule()->getPath('views').'/'.$path;
     }
 
     protected function debug()
