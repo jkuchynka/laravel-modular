@@ -2,12 +2,17 @@
 
 Requires: Laravel 8.0^
 
-This is a WIP and not suitable for production use yet.
+This is a WIP. A lot is changing rapidly as we work towards a stable release. But by all means feel free to give it a try and provide feedback. We're getting close, and below we will detail exactly what's not working and what's coming up in development. 
+
+## Why use this package?
 
 This package was created to make it easier to use Laravel in a modular setup. You can use a modular pattern with out of the box Laravel, but will run into issues and annoyances, such as:
 
 - Console commands won't map to your modular directory structure
+- A lot of Laravel assumes the default mixed directory structure
 - Can't cleanly separate migrations, factories, seeders, routes or views
+
+Because of the above, if you manage multiple sites with similar functionality, then copying things from one site to another is painful. Not to mention nearly impossible to keep them in sync. We're still working out the best method to tackle this issue.
 
 A module is setup with the default Laravel directory structure, but only provides functionality related to the module. It can publish a config that can be modified by other modules or at the global level.
 
@@ -55,6 +60,8 @@ There's nothing special happening in the Modular\Base module, so you can safely 
 ## Artisan
 
 All of the make commands work similar to default Laravel, but come with a module param, which creates the file in the right modular directory with the right namespaces etc. Pass the module name as the first param after each make command.
+
+The goal here is to keep all make commands the same as default Laravel, while only changing namespaces and paths where needed. The only commands not currently working are for controllers and models
 
 ```
 php artisan make:model Users User

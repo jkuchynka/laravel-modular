@@ -4,7 +4,7 @@ namespace Modular\Tests\Commands;
 
 class ModelCommandsTest extends CommandsTestCase
 {
-    public function test_model_make_command()
+    public function testModelMakeCommand()
     {
         $this->artisan('make:model', [
             'module' => 'foo_bar',
@@ -17,7 +17,7 @@ class ModelCommandsTest extends CommandsTestCase
         $this->assertStringContainsString('use Base\\Model;', $contents);
     }
 
-    public function test_model_make_command_all()
+    public function testModelMakeCommandAll()
     {
         $this->artisan('make:model', [
             'module' => 'foo_bar',
